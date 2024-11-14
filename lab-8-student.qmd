@@ -1,6 +1,6 @@
 ---
 title: "Lab 8: Searching for Efficiency"
-author: "Your name here!"
+author: "Miriam Rosen"
 format: html
 editor: source
 embed-resources: true
