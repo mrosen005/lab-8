@@ -1,9 +1,17 @@
 ---
 title: "Lab 8: Searching for Efficiency"
 author: "Miriam Rosen"
-format: html
+format: 
+  html:  
+    embed-resources: true
+    code-tools: true
+    code-fold: true
+    toc: true
 editor: source
-embed-resources: true
+execute: 
+  echo: true
+  message: false
+  warning: false
 ---
 
 ```{r}
@@ -38,12 +46,25 @@ First up, we're going to revisit Question 3 from Lab 2. This question asked:
 
 > What are the data types of the variables in this dataset?
 
-**1. Using `map_chr()`, produce a nicely formatted table of the data type of each variable in the `surveys` dataset.** Specifically, the table should have 15 columns, one for
-each variable, with the datatype of that variable immediately below it's name. 
+**1. Using `map_chr()`, produce a nicely formatted table of the data type of each variable in the `surveys` dataset.** Specifically, the table should have 15 columns, one for each variable, with the datatype of that variable immediately below it's name. 
 
 ```{r}
 #| label: map-data-types-of-surveys
 
+
+ map_chr_func <- function(df){
+  typ <- map_chr(df, class)
+  return(typ)
+ }
+
+
+tibble(column = names(evals), 
+       type = map_chr_func(evals)
+       ) |> 
+  pivot_wider(names_from = column, 
+              values_from = type
+              ) |> 
+  print()
 
 ```
 
@@ -61,6 +82,17 @@ list output back into a data frame.
 
 ```{r}
 #| label: map-to-mutate-columns
+
+
+bind_cols(map_at(evals,
+                          .at = c("teacher_id",
+                                  "weekday",
+                                  "academic_degree", 
+                                  "seniority",
+                                  "gender"),
+                          .f = as.factor
+                          )
+                   ) 
 
 
 ```
@@ -88,6 +120,58 @@ I'm using the `sen_level` classification from Challenge 3
 ```{r}
 #| label: double-pivot-for-summary-table
 
+evals |> 
+  distinct(teacher_id,
+           seniority,
+           sex,
+           academic_degree
+           ) |>
+  mutate(sen_level = if_else(seniority <= 4, 
+                             "Junior (4 years or less)",
+                             "Senior (more than 4 years)"
+                             )
+         ) |>
+    count(sen_level) |> 
+  bind_rows(
+    evals |> 
+      distinct(teacher_id,
+               seniority,
+               sex,
+               academic_degree
+               ) |>
+      count(sex),
+    evals |> 
+      distinct(teacher_id,
+               seniority,
+               sex,
+               academic_degree
+               ) |>
+      count(academic_degree)) |>
+  pivot_longer(cols = -n,
+               names_to = "category",
+               values_to = "value"
+               ) |> 
+    filter(!is.na(value)) |> 
+  select(-category) |>
+  pivot_wider(names_from = value,
+              values_from = n,
+              values_fill = list(n = 0)
+              ) |>
+  select(female,
+         male,
+         "Junior (4 years or less)", "Senior (more than 4 years)",
+         no_dgr,
+         ma,
+         dr,
+         prof
+         ) |>
+  rename(Female = female, 
+         Male = male, 
+         "No Degree" = no_dgr, 
+         Masters = ma, 
+         Doctorate = dr, 
+         Professor = prof
+         )
 
 ```
 
@@ -110,6 +194,17 @@ Question 1 asked you to use `across()` to make a table which summarized:
 
 ```{r}
 #| label: map-missing-values-of-fish
+
+
+tibble(Variable = names(fish), 
+       Missing = map_int(fish, 
+                         ~ sum(is.na(.x)
+                               )
+                         )
+       ) |> 
+  rename(`Missing Amount` = Missing, 
+         `Fish Attributes` = Variable)
+
 
 
 ```
