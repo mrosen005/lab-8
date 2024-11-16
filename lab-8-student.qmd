@@ -149,20 +149,20 @@ evals |>
                sex,
                academic_degree
                ) |>
-      count(academic_degree)) |>
+  count(academic_degree)) |>
   pivot_longer(cols = -n,
                names_to = "category",
-               values_to = "value"
+               values_to = "count"
                ) |> 
-  filter(!is.na(value)) |> 
+  filter(!is.na(count)) |>
   select(-category) |>
-  pivot_wider(names_from = value,
-              values_from = n,
-              values_fill = list(n = 0)
+  pivot_wider(names_from = count,
+              values_from = n
               ) |>
   select(female,
          male,
-         "Junior (4 years or less)", "Senior (more than 4 years)",
+         "Junior (4 years or less)", 
+         "Senior (more than 4 years)",
          no_dgr,
          ma,
          dr,
@@ -175,6 +175,7 @@ evals |>
          Doctorate = dr, 
          Professor = prof
          )
+  
  
 ```
 
