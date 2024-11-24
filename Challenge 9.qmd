@@ -1,0 +1,175 @@
+---
+title: "Challenge 9"
+author: "Miriam Rosen"
+format: 
+  html:  
+    embed-resources: true
+    code-tools: true
+    code-fold: true
+    toc: true
+editor: source
+execute: 
+  echo: true
+  message: false
+  warning: false
+---
+
+## Lab 8 Tables Using kable()
+
+```{r}
+#| label: loading-in-packages
+
+
+# Loading in tidyverse to use use read_csv
+
+library(tidyverse) 
+
+# Loading in knitr and kableExtra
+library(knitr)
+library(kableExtra)
+```
+
+
+```{r}
+#| label: loading-in-data
+
+# Loading in data used for tables 
+  
+# Data from Lab 2
+surveys <- read_csv(here::here("data", "surveys.csv"))
+
+# Data from Lab 3
+evals <- read_csv(here::here("data", "teacher_evals.csv")) |> 
+  rename(sex = gender)
+
+# Data from Lab 7
+fish <- read_csv(here::here("data", "BlackfootFish.csv"))
+```
+
+
+```{r}
+
+#| label: queston-1-table
+
+ map_chr_func <- function(df){
+  typ <- map_chr(df,
+                 class
+                 )
+  return(typ)
+ }
+
+
+tibble(column = names(evals), 
+       type = map_chr_func(evals)
+       ) |> 
+  pivot_wider(names_from = column, 
+              values_from = type
+              ) |> 
+  kable() |>
+  kable_styling(font_size = 13)
+```
+
+```{r}
+bind_cols(map_at(evals,
+                          .at = c("teacher_id",
+                                  "weekday",
+                                  "academic_degree", 
+                                  "seniority",
+                                  "gender"),
+                          .f = as.factor
+                          )
+                   ) |> 
+  rename("Course ID" = "course_id", 
+         "Teacher ID" = "teacher_id", 
+         "Question Number" = "question_no", 
+         "Number of Participants" = "no_participants",
+         "Response Rate" = "resp_share",
+         "SET Score Average" = "SET_score_avg", 
+         "Student Grade Average" = "stud_grade_avg"
+         
+         ) |>
+  kable() |>
+  kable_styling(font_size = 13) 
+  
+  
+  
+```
+```{r}
+
+evals |> 
+  distinct(teacher_id,
+           seniority,
+           sex,
+           academic_degree
+           ) |>
+  mutate(sen_level = if_else(seniority <= 4, 
+                             "Junior (4 years or less)",
+                             "Senior (more than 4 years)"
+                             )
+         ) |>
+    count(sen_level) |> 
+  bind_rows(
+    evals |> 
+      distinct(teacher_id,
+               seniority,
+               sex,
+               academic_degree
+               ) |>
+      count(sex),
+    evals |> 
+      distinct(teacher_id,
+               seniority,
+               sex,
+               academic_degree
+               ) |>
+  count(academic_degree)) |>
+  pivot_longer(cols = -n,
+               names_to = "category",
+               values_to = "count"
+               ) |> 
+  filter(!is.na(count)) |>
+  select(-category) |>
+  pivot_wider(names_from = count,
+              values_from = n
+              ) |>
+  select(female,
+         male,
+         "Junior (4 years or less)", 
+         "Senior (more than 4 years)",
+         no_dgr,
+         ma,
+         dr,
+         prof
+         ) |>
+  rename(Female = female, 
+         Male = male, 
+         "No Degree" = no_dgr, 
+         Masters = ma, 
+         Doctorate = dr, 
+         Professor = prof
+        ) |> 
+kable() |>
+  kable_styling(font_size = 13) 
+  
+```
+```{r}
+
+tibble(Variable = names(fish), 
+       Missing = map_int(fish, 
+                         ~ sum(is.na(.x)
+                               )
+                         )
+       ) |> 
+  rename(`Missing Amount` = Missing, 
+         `Fish Attributes` = Variable) |>
+  kable() |>
+  kable_styling(font_size = 13) 
+```
+
+
+## Lab 9 Tables Using gt()
+
+```{r}
+
+
+```

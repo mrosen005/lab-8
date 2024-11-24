@@ -65,8 +65,33 @@ tibble(column = names(evals),
        ) |> 
   pivot_wider(names_from = column, 
               values_from = type
-              ) |> 
-  print()
+              ) |>
+    rename("Course ID" = "course_id", 
+         "Teacher ID" = "teacher_id", 
+         "Question Number" = "question_no",
+         "Number of Participants" = "no_participants", 
+         "Response Rate" = "resp_share", 
+          "SET Score Average" = "SET_score_avg",
+         "Student Grade Average" = "stud_grade_avg", 
+         "Student Grade Standard Deviation" = "stud_grade_std",
+         "Student Grade Variance Coefficient" = "stud_grade_var_coef", 
+         "Percent Failed" = "percent_failed", 
+         "Current Semester Student Grade Average" = "stud_grade_avg_cur", 
+         "Current Semester Student Grade Standard Deviation" = "stud_grade_std_cur", 
+         "Current Semester Student Grade Variance Coefficient" = "stud_grade_var_coef_cur", 
+         "Current Semester Perecent Failed" = "percent_failed_cur",
+         "Class Duration" = "class_duration", 
+         "Weekday" = "weekday", 
+         "Time of Day" = "time_of_day", 
+         "SET Score of Teacher in Previous Semester" = "SET_score_1sem", 
+         "Maximum Score" = "maximum_score", 
+         "Academic Degree" = "academic_degree", 
+         "Seniority" = "seniority", 
+         "Gender" = "sex"
+         ) |>
+  knitr::kable() |>
+  kableExtra::kable_styling(font_size = 15)
+
 
 ```
 
@@ -94,7 +119,35 @@ bind_cols(map_at(evals,
                                   "gender"),
                           .f = as.factor
                           )
-                   ) 
+                   ) |>
+rename("Course ID" = "course_id", 
+         "Teacher ID" = "teacher_id", 
+         "Question Number" = "question_no",
+         "Number of Participants" = "no_participants", 
+         "Response Rate" = "resp_share", 
+          "SET Score Average" = "SET_score_avg",
+         "Student Grade Average" = "stud_grade_avg", 
+         "Student Grade Standard Deviation" = "stud_grade_std",
+         "Student Grade Variance Coefficient" = "stud_grade_var_coef", 
+         "Percent Failed" = "percent_failed", 
+         "Current Semester Student Grade Average" = "stud_grade_avg_cur", 
+         "Current Semester Student Grade Standard Deviation" = "stud_grade_std_cur", 
+         "Current Semester Student Grade Variance Coefficient" = "stud_grade_var_coef_cur", 
+         "Current Semester Perecent Failed" = "percent_failed_cur",
+         "Class Duration" = "class_duration", 
+         "Weekday" = "weekday", 
+         "Time of Day" = "time_of_day", 
+         "SET Score of Teacher in Previous Semester" = "SET_score_1sem", 
+         "Maximum Score" = "maximum_score", 
+         "Academic Degree" = "academic_degree", 
+         "Seniority" = "seniority", 
+         "Gender" = "sex"
+         )  |> 
+  head() |>
+  knitr::kable() |>
+  kableExtra::kable_styling(font_size = 15)
+
+# Used head function to print just the first few rows so that my quarto document would not be extremely long
 
 
 ```
@@ -174,7 +227,9 @@ evals |>
          Masters = ma, 
          Doctorate = dr, 
          Professor = prof
-         )
+         ) |>
+  knitr::kable() |>
+  kableExtra::kable_styling(font_size = 15)
   
  
 ```
@@ -207,7 +262,9 @@ tibble(Variable = names(fish),
                          )
        ) |> 
   rename(`Missing Amount` = Missing, 
-         `Fish Attributes` = Variable)
+         `Fish Attributes` = Variable) |>
+  knitr::kable() |>
+  kableExtra::kable_styling(font_size = 15)
 
 
 
